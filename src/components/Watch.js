@@ -52,7 +52,6 @@ const Clock = () => {
       interval = setInterval(() => {
         let currentTime = Date.now() - startTime;
         setTime(currentTime);
-        formatTime(currentTime);
       });
 
     } else if (!isActive) {
