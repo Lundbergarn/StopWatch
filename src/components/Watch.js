@@ -2,14 +2,12 @@ import React, { useState, useEffect } from 'react'
 import Button from './Button';
 
 const Clock = () => {
-  const [isActive, setIsActive] = useState(false);
-  const [time, setTime] = useState('0.00');   // millisecounds
   const [splitValues, setSplitValues] = useState([]);
-  const [secounds, setSecounds] = useState('0.00');
-  const [minutes, setMinutes] = useState(0);
+  const [isActive, setIsActive] = useState(false);
+  const [time, setTime] = useState('0.00');
   const [laps, setLaps] = useState([]);
   const [lap, setLap] = useState(0);
-
+  let interval = null;
 
   function toggleTimer() {
     setIsActive(!isActive);
@@ -17,8 +15,6 @@ const Clock = () => {
 
   function resetTimer() {
     setTime('0.00');
-    setSecounds('0.00')
-    setMinutes(0);
     setLap(0);
     setLaps([]);
     setIsActive(false);
@@ -26,36 +22,28 @@ const Clock = () => {
   }
 
   function splitTimer() {
-    let lapTime = formatTime((time - lap));
-    let lapTimes = [...laps];
-    lapTimes.unshift(lapTime)
+    if (isActive) {
+      let lapTime = formatTime((time - lap));
+      let lapTimes = [...laps];
+      lapTimes.unshift(lapTime)
 
-    setLaps(lapTimes)
-    setLap(time);
+      setLaps(lapTimes)
+      setLap(time);
 
-    let splitTime = formatTime(time);
-    let splitVal = [...splitValues];
-    splitVal.unshift(splitTime);
-    setSplitValues(splitVal);
-
+      let splitTime = formatTime(time);
+      let splitVal = [...splitValues];
+      splitVal.unshift(splitTime);
+      setSplitValues(splitVal);
+    }
   }
 
   function formatTime(ms) {
     let min = Math.floor((ms / (1000 * 60)) % 60);
     let sec = ((ms % 60000) / 1000).toFixed(2);
-    setMinutes(min);
-    setSecounds(sec);
-
     return `${min < 10 ? '0' + min : min}.${sec < 10 ? '0' + sec : sec}`;
   }
 
-  function formatLapTime(ms) {
-    let min = Math.floor((ms / (1000 * 60)) % 60);
-    let sec = ((ms % 60000) / 1000).toFixed(2);
-    return `${min < 10 ? '0' + min : min}.${sec < 10 ? '0' + sec : sec}`;
-  }
 
-  let interval = null;
   useEffect(() => {
 
     if (isActive) {
@@ -77,13 +65,13 @@ const Clock = () => {
   return (
     <div className="clock">
       <div className="time">
+
         <p className="time__total">
-          {minutes < 10 ? "0" + minutes + '.' : minutes}
-          {secounds < 10 ? '0' + secounds : secounds}
+          {formatTime(time)}
         </p>
 
         <p className="time__lap">
-          {formatLapTime(time - lap)}
+          {formatTime(time - lap)}
         </p>
       </div>
 
